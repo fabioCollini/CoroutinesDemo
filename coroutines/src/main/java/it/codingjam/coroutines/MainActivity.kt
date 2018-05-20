@@ -1,16 +1,25 @@
 package it.codingjam.coroutines
 
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
+import com.google.gson.GsonBuilder
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.experimental.CoroutineCallAdapterFactory
-import it.codingjam.common.ServiceFactory
-import it.codingjam.common.arch.viewModel
+import it.codingjam.coroutines.utils.viewModel
 import kotlinx.android.synthetic.main.activity_main.*
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.CallAdapter
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class MainActivity : AppCompatActivity() {
 
-    private val viewModel: ViewModel1 by viewModel(this) {
-        ViewModel1(ServiceFactory.createRxJavaService(CoroutineCallAdapterFactory())).also { it.load() }
+    private val viewModel by viewModel(this) {
+        ViewModel1(
+                TokenHolder(PreferenceManager.getDefaultSharedPreferences(applicationContext)),
+                createApi(CoroutineCallAdapterFactory())
+        ).also { it.load() }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,4 +30,18 @@ class MainActivity : AppCompatActivity() {
             text.text = it
         }
     }
+
+    fun createApi(callAdapter: CallAdapter.Factory): StackOverflowService {
+        val okHttpClient = OkHttpClient.Builder()
+                .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
+                .build()
+
+        return Retrofit.Builder()
+                .baseUrl("https://raw.githubusercontent.com/")
+                .addCallAdapterFactory(callAdapter)
+                .client(okHttpClient)
+                .addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))
+                .build().create(StackOverflowService::class.java)
+    }
+
 }

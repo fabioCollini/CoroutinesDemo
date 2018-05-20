@@ -3,12 +3,13 @@ package it.codingjam.coroutines
 import android.arch.lifecycle.ViewModel
 import it.codingjam.coroutines.utils.LiveDataDelegate
 import it.codingjam.coroutines.utils.log
+import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.withContext
 
-class ViewModel1(
+class SimpleExampleViewModel(
         private val tokenHolder: TokenHolder,
         private val api: StackOverflowService
 ) : ViewModel() {
@@ -20,21 +21,23 @@ class ViewModel1(
     private val job = Job()
 
     fun load() {
-        launch(UI + job) {
-            log("start")
+//    launch(UI + job) {
+//      try {
+//        log("start")
+//        val token = api.login().await().token
+//        log("where am I?")
+//        val data = api.loadData(token).await()
+//        updateUi(data)
+//      } catch (e: Exception) {
+//        updateUi(e.toString())
+//      }
+//    }
+        launch(CommonPool + job) {
             try {
-                var token = async { tokenHolder.loadToken() }.await()
-                if (token.isEmpty()) {
-                    updateUi("Logging in")
-                    token = api.login().await().token
-                    log("where am I?")
-                    async { tokenHolder.saveToken(token) }.await()
-                }
-
-                updateUi("Loading data")
-
+                log("start")
+                val token = api.login().await().token
+                log("where am I?")
                 val data = api.loadData(token).await()
-
                 updateUi(data)
             } catch (e: Exception) {
                 updateUi(e.toString())
@@ -42,9 +45,11 @@ class ViewModel1(
         }
     }
 
-    private fun updateUi(s: Any) {
-        log("updateUi")
-        state = s.toString()
+    private suspend fun updateUi(s: Any) {
+        withContext(UI) {
+            log("updateUi")
+            state = s.toString()
+        }
     }
 
 

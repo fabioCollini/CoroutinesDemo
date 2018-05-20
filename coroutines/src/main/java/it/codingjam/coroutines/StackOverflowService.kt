@@ -1,21 +1,18 @@
 package it.codingjam.coroutines
 
-import it.codingjam.common.Badge
-import it.codingjam.common.EnvelopePayload
-import it.codingjam.common.User
 import kotlinx.coroutines.experimental.Deferred
 import retrofit2.http.GET
-import retrofit2.http.Path
+import retrofit2.http.Query
+
+data class LoginResponse(var token: String)
+
+data class MyData(var data: String)
 
 interface StackOverflowService {
 
-    @EnvelopePayload("items")
-    @GET("/users")
-    fun getTopUsers(): Deferred<List<User>>
+    @GET("/fabioCollini/CoroutinesDemo/master/data/login.json")
+    fun login(): Deferred<LoginResponse>
 
-    @EnvelopePayload("items")
-    @GET("/users/{userId}/badges")
-    fun getBadges(
-            @Path("userId") userId: Int
-    ): Deferred<List<Badge>>
+    @GET("/fabioCollini/CoroutinesDemo/master/data/data.json")
+    fun loadData(@Query("token") token: String): Deferred<MyData>
 }

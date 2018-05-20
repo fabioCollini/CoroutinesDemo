@@ -5,10 +5,9 @@ import it.codingjam.coroutines.utils.LiveDataDelegate
 import it.codingjam.coroutines.utils.log
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
 
-class ViewModel1(
+class ViewModel3(
         private val tokenHolder: TokenHolder,
         private val api: StackOverflowService
 ) : ViewModel() {
@@ -21,14 +20,14 @@ class ViewModel1(
 
     fun load() {
         launch(UI + job) {
-            log("start")
             try {
-                var token = async { tokenHolder.loadToken() }.await()
+                log("start")
+                var token = tokenHolder.loadToken()
                 if (token.isEmpty()) {
                     updateUi("Logging in")
                     token = api.login().await().token
                     log("where am I?")
-                    async { tokenHolder.saveToken(token) }.await()
+                    tokenHolder.saveToken(token)
                 }
 
                 updateUi("Loading data")

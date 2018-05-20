@@ -1,4 +1,4 @@
-package it.codingjam.common.arch
+package it.codingjam.coroutines.utils
 
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
