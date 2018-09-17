@@ -3,16 +3,13 @@ package it.codingjam.coroutines
 import android.arch.lifecycle.ViewModel
 import it.codingjam.coroutines.utils.LiveDataDelegate
 import it.codingjam.coroutines.utils.log
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.launch
-import kotlinx.coroutines.experimental.withContext
+import kotlinx.coroutines.experimental.*
+import kotlinx.coroutines.experimental.android.Main
 
 class ViewModel5(
         private val tokenHolder: TokenHolder,
         private val api: StackOverflowService
-) : ViewModel() {
+) : ViewModel(), CoroutineScope {
 
     val liveDataDelegate = LiveDataDelegate("")
 
@@ -20,8 +17,10 @@ class ViewModel5(
 
     private val job = Job()
 
+    override val coroutineContext = job + Dispatchers.IO
+
     fun load() {
-        launch(CommonPool + job) {
+        launch {
             try {
                 var token = tokenHolder.loadToken()
                 if (token.isEmpty()) {
@@ -42,12 +41,11 @@ class ViewModel5(
     }
 
     private suspend fun updateUi(s: Any) {
-        withContext(UI) {
+        withContext(Dispatchers.Main) {
             log("updateUi")
             state = s.toString()
         }
     }
-
 
     override fun onCleared() {
         job.cancel()

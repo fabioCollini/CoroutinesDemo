@@ -3,14 +3,16 @@ package it.codingjam.coroutines
 import android.arch.lifecycle.ViewModel
 import it.codingjam.coroutines.utils.LiveDataDelegate
 import it.codingjam.coroutines.utils.log
+import kotlinx.coroutines.experimental.CoroutineScope
+import kotlinx.coroutines.experimental.Dispatchers
 import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.android.Main
 import kotlinx.coroutines.experimental.launch
 
 class ViewModel3(
         private val tokenHolder: TokenHolder,
         private val api: StackOverflowService
-) : ViewModel() {
+) : ViewModel(), CoroutineScope {
 
     val liveDataDelegate = LiveDataDelegate("")
 
@@ -18,8 +20,10 @@ class ViewModel3(
 
     private val job = Job()
 
+    override val coroutineContext = job + Dispatchers.Main
+
     fun load() {
-        launch(UI + job) {
+        launch {
             try {
                 log("start")
                 var token = tokenHolder.loadToken()

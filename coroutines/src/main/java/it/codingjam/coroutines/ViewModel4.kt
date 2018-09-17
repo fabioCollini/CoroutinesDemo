@@ -3,16 +3,13 @@ package it.codingjam.coroutines
 import android.arch.lifecycle.ViewModel
 import it.codingjam.coroutines.utils.LiveDataDelegate
 import it.codingjam.coroutines.utils.log
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.launch
-import kotlinx.coroutines.experimental.withContext
+import kotlinx.coroutines.experimental.*
+import kotlinx.coroutines.experimental.android.Main
 
 class ViewModel4(
         private val tokenHolder: TokenHolder,
         private val api: StackOverflowService
-) : ViewModel() {
+) : ViewModel(), CoroutineScope {
 
     val liveDataDelegate = LiveDataDelegate("")
 
@@ -20,25 +17,27 @@ class ViewModel4(
 
     private val job = Job()
 
+    override val coroutineContext = job + Dispatchers.IO
+
     fun load() {
-        launch(CommonPool + job) {
+        launch {
             try {
                 log("start")
                 var token = tokenHolder.loadToken()
                 if (token.isEmpty()) {
-                    withContext(UI) { updateUi("Logging in") }
+                    withContext(Dispatchers.Main) { updateUi("Logging in") }
                     token = api.login().await().token
                     log("where am I?")
                     tokenHolder.saveToken(token)
                 }
 
-                withContext(UI) { updateUi("Loading data") }
+                withContext(Dispatchers.Main) { updateUi("Loading data") }
 
                 val data = api.loadData(token).await()
 
-                withContext(UI) { updateUi(data) }
+                withContext(Dispatchers.Main) { updateUi(data) }
             } catch (e: Exception) {
-                withContext(UI) { updateUi(e.toString()) }
+                withContext(Dispatchers.Main) { updateUi(e.toString()) }
             }
         }
     }
