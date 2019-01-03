@@ -1,6 +1,6 @@
 package it.codingjam.coroutines
 
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.ViewModel
 import it.codingjam.coroutines.utils.LiveDataDelegate
 import it.codingjam.coroutines.utils.log
 import kotlinx.coroutines.*

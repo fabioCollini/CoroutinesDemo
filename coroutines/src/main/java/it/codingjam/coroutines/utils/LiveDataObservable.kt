@@ -1,6 +1,6 @@
 package it.codingjam.coroutines.utils
 
-import android.arch.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleOwner
 
 interface LiveDataObservable<out T> {
 
