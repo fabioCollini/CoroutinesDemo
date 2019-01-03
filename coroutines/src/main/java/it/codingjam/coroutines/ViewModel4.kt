@@ -3,8 +3,7 @@ package it.codingjam.coroutines
 import android.arch.lifecycle.ViewModel
 import it.codingjam.coroutines.utils.LiveDataDelegate
 import it.codingjam.coroutines.utils.log
-import kotlinx.coroutines.experimental.*
-import kotlinx.coroutines.experimental.android.Main
+import kotlinx.coroutines.*
 
 class ViewModel4(
         private val tokenHolder: TokenHolder,

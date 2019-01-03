@@ -3,9 +3,8 @@ package it.codingjam.coroutines
 import android.content.SharedPreferences
 import com.nalulabs.prefs.string
 import it.codingjam.coroutines.utils.log
-import kotlinx.coroutines.experimental.Dispatchers
-import kotlinx.coroutines.experimental.IO
-import kotlinx.coroutines.experimental.withContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class TokenHolder(prefs: SharedPreferences) {
 

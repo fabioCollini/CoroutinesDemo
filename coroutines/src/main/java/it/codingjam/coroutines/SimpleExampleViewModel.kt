@@ -3,11 +3,7 @@ package it.codingjam.coroutines
 import android.arch.lifecycle.ViewModel
 import it.codingjam.coroutines.utils.LiveDataDelegate
 import it.codingjam.coroutines.utils.log
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.launch
-import kotlinx.coroutines.experimental.withContext
+import kotlinx.coroutines.*
 
 class SimpleExampleViewModel(
         private val tokenHolder: TokenHolder,
@@ -32,7 +28,7 @@ class SimpleExampleViewModel(
 //        updateUi(e.toString())
 //      }
 //    }
-        launch(CommonPool + job) {
+        GlobalScope.launch(Dispatchers.Main + job) {
             try {
                 log("start")
                 val token = api.login().await().token
@@ -46,7 +42,7 @@ class SimpleExampleViewModel(
     }
 
     private suspend fun updateUi(s: Any) {
-        withContext(UI) {
+        withContext(Dispatchers.Main) {
             log("updateUi")
             state = s.toString()
         }
