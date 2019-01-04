@@ -16,7 +16,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class MainActivity : AppCompatActivity() {
 
     private val viewModel by viewModel(this) {
-        ViewModel1(
+        ViewModel6(
                 TokenHolder(PreferenceManager.getDefaultSharedPreferences(applicationContext)),
                 createApi(CoroutineCallAdapterFactory())
         ).also { it.load() }
